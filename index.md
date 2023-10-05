@@ -3,6 +3,7 @@
 ## Demos
 
 - [Bouncing Balls](01-ball)
+- [Ball Object Notation](03-ball-object)
 
 ## Projects
 - [Interactive Scene](02-scene)

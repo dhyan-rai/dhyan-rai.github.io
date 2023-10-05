@@ -8,7 +8,7 @@
 // 
 //  Extra for experts: 
 //   - Handling collisions of the ball with the walls (especially slanted walls) using p5.collide
-//   - Iterating through an array filled with dictionaries to make hitboxes for the walls
+//   - Iterating through an array filled with objects to make hitboxes for the walls
 //   - Using vectors to determine velocity of the ball and force applied on the ball
   
 
