@@ -1,7 +1,6 @@
 // Perlin Noise Ball
 
 let ballArray = [];
-let time = 0;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -9,7 +8,7 @@ function setup() {
 }
 
 function draw() {
-  background("white");
+  background(255, 70);
   noStroke();
   
 
@@ -22,7 +21,7 @@ function draw() {
     //display
     circle(theBall.x, theBall.y, theBall.size);
   
-    time += 0.01;
+    theBall.time += 0.01;
   }
 }
 
