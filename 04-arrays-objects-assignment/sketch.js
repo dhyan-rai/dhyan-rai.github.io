@@ -20,7 +20,7 @@ function setup() {
 }
 
 function draw() {
-  background(220, 30);
+  //background(220);
   translate(noise(time) * width, noise(time + 300) * height);
   push();
   fill("green");
@@ -38,7 +38,7 @@ function draw() {
   angle2 -= 0.1 + angVel;
   time += 0.01;
   cirSize += 0.01;
-  angVel += 0.0001;
+  //angVel = random(1, 5) / 10;
   len += 0.01;
 }
 
