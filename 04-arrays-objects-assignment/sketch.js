@@ -5,49 +5,40 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
-
-// let p1;
-// let p2;
-// let angle = 0;
-// let angle2 = 5;
-// let time = 0;
-// let cirSize = 60;
-// let angVel = 0;
-// let len = 100;
 let x = 0;
 let y = 0;
 let ground;
+let player;
+let playerScale = 0.8;
+let hitBoxPosY = 324;
+let rectHitboxWidth = 80;
+let rectHitboxHeight = 80;
+
+function preload() {
+  ground = loadImage("ground.png");
+  player = loadImage("player.png");
+}
+
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
-  let ground = loadImage("ground.jpg");
+  createCanvas(ground.width, ground.height);
 }
 
 function draw() {
   x = mouseX;
   y = mouseY;
+  
+  //Setting the background
+  imageMode(CORNER);
   background(ground);
-  ellipse(x, y, 70, 45);
-  rect(x - 40/2, y + 45/2, 40, 80);
-  //rect();
-  // translate(noise(time) * width, noise(time + 300) * height);
-  // push();
-  // fill("green");
-  // noStroke();
-  // circle(0, 0, 20);
-  // pop();
-  // p1 = p5.Vector.fromAngle(angle, len);
-  // p2 = p5.Vector.fromAngle(angle2, len);
-  // push();
-  // fill("black");
-  // circle(p1.x, p1.y, cirSize);
-  // circle(p2.x, p2.y, cirSize);
-  // pop();
-  // angle += 0.12 + angVel;
-  // angle2 -= 0.1 + angVel;
-  // time += 0.01;
-  // cirSize += 0.01;
-  // len += 0.01;
+
+  //Creating the player image
+  imageMode(CENTER);
+  image(player, mouseX, 387, player.width * playerScale, player.height * playerScale);
+
+  //creating player hitbox
+  ellipse(x + 3, hitBoxPosY, 100, 60);
+  //rect(x + 3 - rectHitboxWidth, hitBoxPosY + rectHitboxHeight/4, rectHitboxWidth, rectHitboxHeight);
 }
 
 
