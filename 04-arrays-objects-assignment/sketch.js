@@ -13,6 +13,8 @@ let playerScale = 0.8;
 let hitBoxPosY = 324;
 let rectHitboxWidth = 80;
 let rectHitboxHeight = 80;
+let playerPos;
+let gravity;
 
 function preload() {
   ground = loadImage("ground.png");
@@ -22,6 +24,8 @@ function preload() {
 
 function setup() {
   createCanvas(ground.width, ground.height);
+  playerPos = createVector(mouseX, 387);
+  gravity = createVector(0, 1);
 }
 
 function draw() {
@@ -32,12 +36,19 @@ function draw() {
   imageMode(CORNER);
   background(ground);
 
+  //creating player hitbox
+  //ellipse(x + 3, hitBoxPosY, 100, 60);
+
   //Creating the player image
   imageMode(CENTER);
-  image(player, mouseX, 387, player.width * playerScale, player.height * playerScale);
+  // playerPos.add(gravity);
+  // if(playerPos.y > 387){
+  //   playerPos.y = 387;
+  // }
+  image(player, playerPos.x, playerPos.y, player.width * playerScale, player.height * playerScale);
 
-  //creating player hitbox
-  ellipse(x + 3, hitBoxPosY, 100, 60);
+
+
   //rect(x + 3 - rectHitboxWidth, hitBoxPosY + rectHitboxHeight/4, rectHitboxWidth, rectHitboxHeight);
 }
 
