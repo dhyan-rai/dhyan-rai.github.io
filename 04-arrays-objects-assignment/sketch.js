@@ -17,7 +17,7 @@ let playerPos;
 let jumpForce;
 let canJump = true;
 let isJumping = false;
-let easing = 0.08;
+let easing = 0.065;
 let cookieImg;
 let cookieScale = 0.25;
 let cookies = [];
@@ -36,8 +36,8 @@ let h2 = 50;
 
 
 //Hitboxes
-
-let bowlHitbox = {}
+let bowlHitbox = {};
+let playerHitbox = {};
 
 
 
@@ -127,19 +127,23 @@ function mouseClicked() {
 }
 
 function applyHitboxes() {
-
-
-
   push();
   noStroke();
   noFill();
-  rect(playerPos.x - w1/2 + 4, playerPos.y - 30, w1, h1);
+  //rect(playerPos.x - w1/2 + 4, playerPos.y - 30, w1, h1);
+  playerHitbox = {
+    x: playerPos.x - w1/2 + 4,
+    y: playerPos.y - 30,
+    w: w1,
+    h: h1,
+  };
+
   bowlHitbox = {
     x: playerPos.x - w2/2 + 4,
     y: playerPos.y - 85,
     w: w2,
     h: h2,
-  }
+  };
   pop();
 }
 
@@ -151,6 +155,7 @@ function addEasing() {
   let targetX = mouseX;
   let dx = targetX - playerPos.x;
   playerPos.x += dx * easing;
+  playerPos.x = constrain(playerPos.x, 240, 1020);
 }
 
 
@@ -175,7 +180,7 @@ class Cookie {
     circle(0, 0 + 3, cookieImg.width * 0.12);
     this.angle += 2.4;
     this.x += this.dx;
-    this.x = constrain(this.x, 240, 1020)
+    this.x = constrain(this.x, 240, 1020);
     pop();
   }
 
@@ -192,8 +197,9 @@ class Cookie {
 
 }
 
+//function to drop cookies periodically
 let lastDropTime = 0;
-let waitTime = 3500;
+let waitTime = 2000;
 function dropCookies() {
   if (millis() > lastDropTime + waitTime){
     cookies.push(new Cookie());
