@@ -31,8 +31,10 @@ let gameOver = false;
 let bullets1 = [];
 let bullets2 = [];
 let bulletImg;
+let brokenCookieImg;
+let youLoseImg;
 
-// temp vars
+//cookie variables
 let cookieX;
 let cookieY; 
 let cookieAngle;
@@ -42,6 +44,7 @@ let cookieBreaking = false;
 //sounds
 let cookieDropSound;
 let backgroundMusic;
+let jumpSound;
 
 //Hitbox measures
 //dimesnions for player hitbox
@@ -68,7 +71,8 @@ function preload() {
   player = loadImage("player.png");
   cookieImg = loadImage("cookie.png");
   brokenCookieImg = loadImage("broken-cookie.png");
-  bulletImg = loadImage("bullet.png")
+  bulletImg = loadImage("bullet.png");
+  youLoseImg = loadImage("you-lose-face.png");
 
   //loading sounds
   cookieDropSound = loadSound("cookie-drop-sound.mp3");
@@ -94,6 +98,9 @@ function draw() {
     //Setting the background
     imageMode(CORNER);
     background(ground);
+
+    //playing background sound
+    playBgSound();
   
     //Creating the player image
     imageMode(CENTER);
@@ -152,8 +159,11 @@ function draw() {
     }
 
 
-  } else if (gameOver) {
+  } 
+  else if (gameOver) {
     background("black");
+    imageMode(CENTER);
+    image(youLoseImg, width/2, height/2);
   }
 
 }
@@ -177,13 +187,9 @@ function applyJumping() {
 }
 
 function mousePressed() {
-  if(canJump) {
+  if(canJump && startGame) {
     isJumping = true;
     jumpSound.play();
-  }
-
-  if(!backgroundMusic.isPlaying()) {
-    backgroundMusic.loop();
   }
 }
 
@@ -276,25 +282,27 @@ function dropCookies() {
     cookies.push(new Cookie());
     if (cookiesCaught >= 5 && cookiesCaught <= 15) {
       waitTime *= 0.99;
-      loadTime1 *= 0.99
-      loadTime2 *= 0.99
+      loadTime1 *= 0.99;
+      loadTime2 *= 0.99;
       if (waitTime <= 1000) {
         waitTime = 1000;
       }
-    } else if (cookiesCaught >= 15 && cookiesCaught <= 30) {
-        waitTime *= 0.85;
-        loadTime1 *= 0.95;
-        loadTime2 *= 0.95;
-        if (waitTime <= 800) {
-          waitTime = 800;
-        }
-    } else if (cookiesCaught >= 30) {
-        waitTime *= 0.78;
-        loadTime1 *= 0.9;
-        loadTime2 *= 0.9;
-        if (waitTime <= 600) {
-          waitTime = 600;
-        }
+    } 
+    else if (cookiesCaught >= 15 && cookiesCaught <= 30) {
+      waitTime *= 0.85;
+      loadTime1 *= 0.95;
+      loadTime2 *= 0.95;
+      if (waitTime <= 800) {
+        waitTime = 800;
+      }
+    } 
+    else if (cookiesCaught >= 30) {
+      waitTime *= 0.78;
+      loadTime1 *= 0.9;
+      loadTime2 *= 0.9;
+      if (waitTime <= 600) {
+        waitTime = 600;
+      }
     }
     lastDropTime = millis();
   }
@@ -368,5 +376,11 @@ function shootBullets2() {
     if (loadTime2 <= 5500) {
       loadTime2 = 5500;
     }
+  }
+}
+
+function playBgSound() {
+  if(!backgroundMusic.isPlaying()) {
+    backgroundMusic.loop();
   }
 }
