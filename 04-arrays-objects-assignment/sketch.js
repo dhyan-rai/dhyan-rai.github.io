@@ -1,9 +1,13 @@
-// Project Title
-// Your Name
-// Date
+// Cookie Catcher
+// Dhyan Rai
+// 19-10-2023
 //
 // Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+// - used classes and methods in the class to carry out various functionalities of the falling cookies 
+//  and the bullets being shot
+// - used p5.collide to account for collisions (bullet and player) (cookie and player)
+// - used vectors
+// - used text for tracking and displaying score
 
 //Images
 let ground;
@@ -32,7 +36,9 @@ let bullets1 = [];
 let bullets2 = [];
 let bulletImg;
 let brokenCookieImg;
-let youLoseImg;
+let gameOverImg;
+let cookieSound;
+
 
 //cookie variables
 let cookieX;
@@ -72,15 +78,18 @@ function preload() {
   cookieImg = loadImage("cookie.png");
   brokenCookieImg = loadImage("broken-cookie.png");
   bulletImg = loadImage("bullet.png");
-  youLoseImg = loadImage("you-lose-face.png");
+  gameOverImg = loadImage("game-over.png")
+
 
   //loading sounds
   cookieDropSound = loadSound("cookie-drop-sound.mp3");
   backgroundMusic = loadSound("background-music.mp3");
   jumpSound = loadSound("jump.wav");
+  cookieSound = loadSound("collected.wav");
   backgroundMusic.setVolume(0.2);
   cookieDropSound.setVolume(1);
   jumpSound.setVolume(0.5);
+  cookieSound.setVolume(0.8);
 }
 
 
@@ -114,6 +123,7 @@ function draw() {
       cookies.shift();
       cookiesCaught += 1;
       cookieCollected = !cookieCollected;
+      cookieSound.play();
     }
   
     //player follows mouse with easing
@@ -143,8 +153,6 @@ function draw() {
       gameOver = true;
     }
   
-    // console.log(cookiesCaught);
-    // console.log(health);
 
     //shoot bullets
     shootBullets1();
@@ -158,12 +166,23 @@ function draw() {
       bullets2[i].collisionCheck();
     }
 
+    //display score
+    textSize(40);
+    text("Cookies Caught: " + cookiesCaught, 0, 35);
+    textSize(38);
+    text("Cookies Dropped: " + (5 - health), width - 340, 35);
+    textSize(30);
+    text("(Don't drop more than 4!)", width - 337, 75);
+
 
   } 
   else if (gameOver) {
-    background("black");
+    imageMode(CORNER);
+    background(gameOverImg);
     imageMode(CENTER);
-    image(youLoseImg, width/2, height/2);
+    textSize(55);
+    text(cookiesCaught, width/2, 450);
+
   }
 
 }
@@ -289,19 +308,19 @@ function dropCookies() {
       }
     } 
     else if (cookiesCaught >= 15 && cookiesCaught <= 30) {
-      waitTime *= 0.85;
+      waitTime *= 0.95;
       loadTime1 *= 0.95;
       loadTime2 *= 0.95;
-      if (waitTime <= 800) {
-        waitTime = 800;
+      if (waitTime <= 880) {
+        waitTime = 880;
       }
     } 
     else if (cookiesCaught >= 30) {
-      waitTime *= 0.78;
+      waitTime *= 0.92;
       loadTime1 *= 0.9;
       loadTime2 *= 0.9;
-      if (waitTime <= 600) {
-        waitTime = 600;
+      if (waitTime <= 750) {
+        waitTime = 750;
       }
     }
     lastDropTime = millis();
@@ -383,4 +402,60 @@ function playBgSound() {
   if(!backgroundMusic.isPlaying()) {
     backgroundMusic.loop();
   }
+}
+
+function keyPressed()  {
+  if (gameOver && keyCode === 32) {
+    reset();
+  }
+}
+
+function reset() {
+  //Hitbox measures
+  //dimesnions for player hitbox
+  w1 = 100;
+  h1 = 115;
+  
+  //dimesnions for bowl hitbox
+  w2 = 83;
+  h2 = 50;
+  
+  
+  
+  //Hitboxes
+  bowlHitbox = {};
+  playerHitbox = {};
+  
+  playSound = false;
+  lastDropTime = millis();
+  waitTime = 2000;
+  lastShotTime1 = millis();
+  loadTime1 = 7000;
+  lastShotTime2 = millis();
+  loadTime2 = 15000;
+  
+  //cookie variables
+  // let cookieX;
+  // let cookieY; 
+  // let cookieAngle;
+  // let startTime;
+  cookieBreaking = false;
+  
+  health = 5;
+  startGame = true;
+  gameOver = false;
+  bullets1 = [];
+  bullets2 = [];
+  
+  cookies = [];
+  cookieCollected = false;
+  cookiesCaught = 0;
+  cookieBroken = false;
+  
+  canJump = true;
+  isJumping = false;
+  
+  gravity = createVector(0, 2);
+  jumpForce = createVector(0, -13);
+  playerPos = createVector(width/2, groundLevel);
 }
