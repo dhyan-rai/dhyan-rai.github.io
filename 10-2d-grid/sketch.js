@@ -76,6 +76,11 @@ function generateEmptyGrid(cols, rows) {
   return randomArray;
 }
 
-// function mousePressed() {
-//   if(floor(mouseX)/GRID_SIZE >= grid[y][x])
-// }
+function mousePressed() {
+  if(grid[floor(map(mouseY, 0, cellSize * GRID_SIZE, 0, 15))][floor(map(mouseX, 0, cellSize * GRID_SIZE, 0, 15))] === 1) {
+    grid[floor(map(mouseY, 0, cellSize * GRID_SIZE, 0, 15))][floor(map(mouseX, 0, cellSize * GRID_SIZE, 0, 15))] = 0;
+  }
+  else if(grid[floor(map(mouseY, 0, cellSize * GRID_SIZE, 0, 15))][floor(map(mouseX, 0, cellSize * GRID_SIZE, 0, 15))] === 0) {
+    grid[floor(map(mouseY, 0, cellSize * GRID_SIZE, 0, 15))][floor(map(mouseX, 0, cellSize * GRID_SIZE, 0, 15))] = 1;
+  }
+}
