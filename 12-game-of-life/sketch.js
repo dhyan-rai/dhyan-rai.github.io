@@ -79,7 +79,8 @@ function generateRandomGrid(cols, rows) {
     for(let x = 0; x < rows; x++) {
       if(random(100) < 50) {
         randomArray[y].push(0);
-      } else {
+      }
+      else {
         randomArray[y].push(1);
       }      
     }
