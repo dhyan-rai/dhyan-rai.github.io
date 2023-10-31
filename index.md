@@ -11,6 +11,7 @@
 - [Grid Neighbours](11-neighbours)
 - [Game of Life](12-game-of-life)
 - [Grid Character Demo](13-character-grid)
+- [2D Array Grid Assignment](14-grid-assignment)
 
 ## Projects
 - [Interactive Scene](02-scene)
