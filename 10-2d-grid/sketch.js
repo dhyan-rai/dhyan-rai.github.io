@@ -10,14 +10,20 @@
 let grid;
 let cellSize;
 const GRID_SIZE = 15;
+let xOff;
+let yOff;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   if(height >= width){
     cellSize = width/GRID_SIZE;
+    xOff = width/4 - 20;
+    yOff = 0;
   }
   else {
     cellSize = height/GRID_SIZE;
+    xOff = 0;
+    yOff = height/4 - 20;
   }
   grid = generateRandomGrid(GRID_SIZE, GRID_SIZE);
 }
@@ -45,7 +51,10 @@ function displayGrid() {
       if(grid[y][x] === 1){
         fill("black");
       }
+      push();
+      translate(xOff, yOff);
       rect(x * cellSize, y * cellSize, cellSize, cellSize);
+      pop();
     }
   }
 }
@@ -77,10 +86,13 @@ function generateEmptyGrid(cols, rows) {
 }
 
 function mousePressed() {
-  if(grid[floor(map(mouseY, 0, cellSize * GRID_SIZE, 0, 15))][floor(map(mouseX, 0, cellSize * GRID_SIZE, 0, 15))] === 1) {
-    grid[floor(map(mouseY, 0, cellSize * GRID_SIZE, 0, 15))][floor(map(mouseX, 0, cellSize * GRID_SIZE, 0, 15))] = 0;
+  push();
+  translate(xOff, yOff);
+  if(grid[floor(map(mouseY - yOff, 0, cellSize * GRID_SIZE, 0, 15))][floor(map(mouseX - xOff, 0, cellSize * GRID_SIZE, 0, 15))] === 1) {
+    grid[floor(map(mouseY - yOff, 0, cellSize * GRID_SIZE, 0, 15))][floor(map(mouseX - xOff, 0, cellSize * GRID_SIZE, 0, 15))] = 0;
   }
-  else if(grid[floor(map(mouseY, 0, cellSize * GRID_SIZE, 0, 15))][floor(map(mouseX, 0, cellSize * GRID_SIZE, 0, 15))] === 0) {
-    grid[floor(map(mouseY, 0, cellSize * GRID_SIZE, 0, 15))][floor(map(mouseX, 0, cellSize * GRID_SIZE, 0, 15))] = 1;
+  else if(grid[floor(map(mouseY - yOff, 0, cellSize * GRID_SIZE, 0, 15))][floor(map(mouseX - xOff, 0, cellSize * GRID_SIZE, 0, 15))] === 0) {
+    grid[floor(map(mouseY - yOff, 0, cellSize * GRID_SIZE, 0, 15))][floor(map(mouseX - xOff, 0, cellSize * GRID_SIZE, 0, 15))] = 1;
   }
+  pop();
 }
