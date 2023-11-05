@@ -176,6 +176,7 @@ function draw() {
 
 
   } 
+  //you lose
   else if (gameOver) {
     imageMode(CORNER);
     background(gameOverImg);
