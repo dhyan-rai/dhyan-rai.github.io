@@ -8,7 +8,38 @@
 
 let grid;
 let cellSize;
-const GRID_SIZE = 5;
+const GRID_SIZE = 8;
+let readingTiles = false;
+let tileMode;
+let tiles = [];
+
+//initializing the notes
+let sound1;
+let sound2;
+let sound3;
+let sound4;
+let sound5;
+let sound6;
+let sound7;
+let sound8;
+
+let sounds;
+
+
+function preload() {
+
+  //loading the notes
+  sound1 = loadSound("DO.wav");
+  sound2 = loadSound("RE.wav");
+  sound3 = loadSound("MI.wav");
+  sound4 = loadSound("FA.wav");
+  sound5 = loadSound("SOL.wav");
+  sound6 = loadSound("LA.wav");
+  sound7 = loadSound("SI.wav");
+  sound8 = loadSound("DO (octave).wav");
+  sounds  = [sound1, sound2, sound3, sound4, sound5, sound6, sound7, sound8];
+
+}
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -25,6 +56,9 @@ function setup() {
 function draw() {
   background(220);
   displayGrid();
+  if (readingTiles) {
+    readTiles();
+  }
 }
 
 function mousePressed() {
@@ -47,25 +81,27 @@ function keyTyped() {
     grid = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
   }
   else if (key === "p") {
-    let point1 = createVector(0, 0);
-    let point2 = createVector(0, cellSize*GRID_SIZE);
-    for (let i = 0; i < cellSize*GRID_SIZE; i += 20) {
-      strokeWeight = 3;
-      line(point1.x, point1.y, point2.x, point2.y);
-    }
+    readingTiles = true;
   }
 }
 
 function displayGrid() {
+  let i = 0;
   for (let y = 0; y < GRID_SIZE; y++) {
     for (let x = 0; x < GRID_SIZE; x++) {
       if (grid[y][x] === 0) {
         fill("white");
+        tileMode = false;
       }
       if (grid[y][x] === 1) {
         fill("black");
+        tileMode = true;
       }
       rect(x * cellSize, y * cellSize, cellSize, cellSize);
+
+      tiles[i] = (new Tile(x * cellSize, y * cellSize, tileMode));
+
+      i++;
     }
   }
 }
@@ -98,6 +134,32 @@ function generateEmptyGrid(cols, rows) {
   return randomArray;
 }
 
+let i = 0;
 function readTiles() {
-  
+  strokeWeight(10);
+  if (i < cellSize*GRID_SIZE)
+  line(0, i, cellSize*GRID_SIZE, i);
+  i += cellSize/(cellSize - 78);
+  if (i >= cellSize * GRID_SIZE) {
+    i = -5;
+    readingTiles = false;
+  }
+  for (let i = 0; i < tiles.length; i++) {
+    tiles[i].checkCollision();
+  }
 }
+
+class Tile {
+  constructor(x, y, mode) {
+    this.x = x;
+    this.y = y;
+    this.mode = mode;
+  }
+  checkCollision() {
+    if(collidePointLine(this.x, this.y, 0, i, cellSize*GRID_SIZE, i) && this.mode && i < GRID_SIZE*cellSize) {
+      sounds[floor(this.x/cellSize)].play();
+    }
+  }
+}
+
+
