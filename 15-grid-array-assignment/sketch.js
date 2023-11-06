@@ -138,8 +138,8 @@ let i = 0;
 function readTiles() {
   strokeWeight(10);
   if (i < cellSize*GRID_SIZE)
-  line(0, i, cellSize*GRID_SIZE, i);
-  i += cellSize/(cellSize - 78);
+    line(0, i, cellSize*GRID_SIZE, i);
+    i += cellSize/(cellSize - 60);
   if (i >= cellSize * GRID_SIZE) {
     i = -5;
     readingTiles = false;
@@ -156,8 +156,13 @@ class Tile {
     this.mode = mode;
   }
   checkCollision() {
-    if(collidePointLine(this.x, this.y, 0, i, cellSize*GRID_SIZE, i) && this.mode && i < GRID_SIZE*cellSize) {
+    // testing
+    if(collidePointLine(this.x, this.y, 0, i, cellSize*GRID_SIZE, i) && this.mode && i <= GRID_SIZE*cellSize) {
       sounds[floor(this.x/cellSize)].play();
+      return true;
+    }
+    else {
+      return false;
     }
   }
 }
