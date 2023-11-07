@@ -59,6 +59,7 @@ function draw() {
   if (readingTiles) {
     readTiles();
   }
+  console.log(collidePointLine(0, 0, 0, i, cellSize*GRID_SIZE, i));
 }
 
 function mousePressed() {
@@ -99,7 +100,7 @@ function displayGrid() {
       }
       rect(x * cellSize, y * cellSize, cellSize, cellSize);
 
-      tiles[i] = (new Tile(x * cellSize, y * cellSize, tileMode));
+      tiles[i] = new Tile(x * cellSize, y * cellSize, tileMode);
 
       i++;
     }
@@ -134,13 +135,14 @@ function generateEmptyGrid(cols, rows) {
   return randomArray;
 }
 
-let i = 0;
+let i = -1;
 function readTiles() {
   strokeWeight(10);
-  if (i < cellSize*GRID_SIZE)
+  if (i < cellSize*GRID_SIZE) {
     line(0, i, cellSize*GRID_SIZE, i);
-    i += cellSize/(cellSize - 60);
-  if (i >= cellSize * GRID_SIZE) {
+    i += cellSize/(cellSize - 3);
+  }
+  else if (i >= cellSize * GRID_SIZE) {
     i = -5;
     readingTiles = false;
   }
