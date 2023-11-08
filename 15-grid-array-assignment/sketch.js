@@ -54,12 +54,13 @@ function setup() {
 }
 
 function draw() {
+  strokeWeight(9);
   background(220);
   displayGrid();
   if (readingTiles) {
     readTiles();
   }
-  console.log(collidePointLine(0, 0, 0, i, cellSize*GRID_SIZE, i));
+  //console.log(collidePointLine(0, 0, 0, i, cellSize*GRID_SIZE, i));
 }
 
 function mousePressed() {
@@ -135,19 +136,23 @@ function generateEmptyGrid(cols, rows) {
   return randomArray;
 }
 
-let i = -1;
+let lineY = -1;
 function readTiles() {
-  strokeWeight(10);
-  if (i < cellSize*GRID_SIZE) {
-    line(0, i, cellSize*GRID_SIZE, i);
-    i += cellSize/(cellSize - 3);
-  }
-  else if (i >= cellSize * GRID_SIZE) {
-    i = -5;
-    readingTiles = false;
-  }
+  // if (i < cellSize*GRID_SIZE) {
+  //   line(0, i, cellSize*GRID_SIZE, i);
+  //   i += cellSize/(cellSize - 60);
+  // }
   for (let i = 0; i < tiles.length; i++) {
     tiles[i].checkCollision();
+  }
+  if (lineY < cellSize*GRID_SIZE) {
+    line(0, lineY, cellSize*GRID_SIZE, lineY);
+    lineY += cellSize/(cellSize - 3);
+  }
+  else if (lineY >= cellSize*GRID_SIZE){
+    lineY = -1;
+    line(0, lineY, cellSize*GRID_SIZE, lineY);
+    readingTiles = false;
   }
 }
 
@@ -159,7 +164,7 @@ class Tile {
   }
   checkCollision() {
     // testing
-    if(collidePointLine(this.x, this.y, 0, i, cellSize*GRID_SIZE, i) && this.mode && i <= GRID_SIZE*cellSize) {
+    if(collidePointLine(this.x, this.y, 0, lineY, cellSize*GRID_SIZE, lineY) && this.mode && lineY <= GRID_SIZE*cellSize) {
       sounds[floor(this.x/cellSize)].play();
       return true;
     }
