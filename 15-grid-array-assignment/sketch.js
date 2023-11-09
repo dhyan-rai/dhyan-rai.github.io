@@ -147,10 +147,10 @@ function readTiles() {
   }
   if (lineY < cellSize*GRID_SIZE) {
     line(0, lineY, cellSize*GRID_SIZE, lineY);
-    lineY += cellSize/(cellSize - 3);
+    lineY += cellSize/(cellSize - 60);
   }
-  else if (lineY >= cellSize*GRID_SIZE){
-    lineY = -1;
+  else{
+    lineY = 0;
     line(0, lineY, cellSize*GRID_SIZE, lineY);
     readingTiles = false;
   }
@@ -165,8 +165,13 @@ class Tile {
   checkCollision() {
     // testing
     if(collidePointLine(this.x, this.y, 0, lineY, cellSize*GRID_SIZE, lineY) && this.mode && lineY <= GRID_SIZE*cellSize) {
-      sounds[floor(this.x/cellSize)].play();
-      return true;
+      if (this.x === 0) {
+        sounds[0].play();
+      }
+      else {
+        sounds[floor(this.x/cellSize)].play();
+        return true;
+      }
     }
     else {
       return false;
