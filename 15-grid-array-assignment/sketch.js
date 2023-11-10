@@ -87,6 +87,14 @@ function keyTyped() {
     readingTiles = !readingTiles;
     lineY = 0;
   }
+  else if (key === "l") {
+    lineSpeed += 3;
+    lineSpeed = constrain(lineSpeed, -30, 40);
+  }
+  else if (key === "j") {
+    lineSpeed -= 3;
+    lineSpeed = constrain(lineSpeed, -30, 30);
+  }
 }
 
 function displayGrid() {
@@ -139,6 +147,7 @@ function generateEmptyGrid(cols, rows) {
 }
 
 let lineY = 0;
+let lineSpeed = -20;
 
 
 function readTiles() {
@@ -148,7 +157,7 @@ function readTiles() {
   }
   if (lineY < cellSize*GRID_SIZE) {
     line(0, lineY, cellSize*GRID_SIZE, lineY);
-    lineY += cellSize/(cellSize - (80));
+    lineY += cellSize/(cellSize - (frameRate() - (lineSpeed)));
   }
   else{
     lineY = 0;
