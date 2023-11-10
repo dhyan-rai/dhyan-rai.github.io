@@ -28,6 +28,9 @@ let sounds;
 
 function preload() {
 
+  // frame rate
+  frameRate(60)
+
   //loading the notes
   sound1 = loadSound("DO.wav");
   sound2 = loadSound("RE.wav");
@@ -88,12 +91,12 @@ function keyTyped() {
     lineY = 0;
   }
   else if (key === "l") {
-    lineSpeed += 3;
-    lineSpeed = constrain(lineSpeed, -30, 40);
+    lineSpeed += 1000;
+    //lineSpeed = constrain(lineSpeed, -30, 40);
   }
   else if (key === "j") {
-    lineSpeed -= 3;
-    lineSpeed = constrain(lineSpeed, -30, 30);
+    lineSpeed -= 1000;
+    //lineSpeed = constrain(lineSpeed, -30, 30);
   }
 }
 
@@ -147,17 +150,20 @@ function generateEmptyGrid(cols, rows) {
 }
 
 let lineY = 0;
-let lineSpeed = -20;
+let lineSpeed = 3000;
+
 
 
 function readTiles() {
+
+  let deltaTime = 1 / frameRate();
 
   for (let i = 0; i < tiles.length; i++) {
     tiles[i].checkCollision();
   }
   if (lineY < cellSize*GRID_SIZE) {
     line(0, lineY, cellSize*GRID_SIZE, lineY);
-    lineY += cellSize/(cellSize - (frameRate() - (lineSpeed)));
+    lineY += cellSize/(cellSize - (lineSpeed * deltaTime));
   }
   else{
     lineY = 0;
