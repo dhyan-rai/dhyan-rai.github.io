@@ -35,7 +35,8 @@ function preload() {
   sound4 = loadSound("FA.wav");
   sound5 = loadSound("SOL.wav");
   sound6 = loadSound("LA.wav");
-  sound7 = loadSound("SI.wav");
+  sound7 = loadSound("SI.mp3");
+  sound7.setVolume(0.2);
   sound8 = loadSound("DO (octave).wav");
   sounds  = [sound1, sound2, sound3, sound4, sound5, sound6, sound7, sound8];
 
@@ -83,7 +84,8 @@ function keyTyped() {
     grid = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
   }
   else if (key === "p") {
-    readingTiles = true;
+    readingTiles = !readingTiles;
+    lineY = 0;
   }
 }
 
@@ -101,7 +103,7 @@ function displayGrid() {
       }
       rect(x * cellSize, y * cellSize, cellSize, cellSize);
 
-      tiles[i] = new Tile(x * cellSize, y * cellSize, tileMode);
+      tiles[i] = new Tile(x * cellSize + cellSize/2, y * cellSize, tileMode);
 
       i++;
     }
@@ -136,24 +138,25 @@ function generateEmptyGrid(cols, rows) {
   return randomArray;
 }
 
-let lineY = -1;
+let lineY = 0;
+
+
 function readTiles() {
-  // if (i < cellSize*GRID_SIZE) {
-  //   line(0, i, cellSize*GRID_SIZE, i);
-  //   i += cellSize/(cellSize - 60);
-  // }
+
   for (let i = 0; i < tiles.length; i++) {
     tiles[i].checkCollision();
   }
   if (lineY < cellSize*GRID_SIZE) {
     line(0, lineY, cellSize*GRID_SIZE, lineY);
-    lineY += cellSize/(cellSize - 60);
+    lineY += cellSize/(cellSize - (80));
   }
   else{
     lineY = 0;
-    line(0, lineY, cellSize*GRID_SIZE, lineY);
-    readingTiles = false;
+    //line(0, lineY, cellSize*GRID_SIZE, lineY);
+    //readingTiles = false;
   }
+
+
 }
 
 class Tile {
@@ -163,15 +166,10 @@ class Tile {
     this.mode = mode;
   }
   checkCollision() {
-    // testing
     if(collidePointLine(this.x, this.y, 0, lineY, cellSize*GRID_SIZE, lineY) && this.mode && lineY <= GRID_SIZE*cellSize) {
-      if (this.x === 0) {
-        sounds[0].play();
-      }
-      else {
-        sounds[floor(this.x/cellSize)].play();
+      sounds[floor(this.x/cellSize)].play();
         return true;
-      }
+      
     }
     else {
       return false;
