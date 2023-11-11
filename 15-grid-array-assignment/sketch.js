@@ -25,11 +25,14 @@ let sound8;
 
 let sounds;
 
+let targetFrameRate = 60;
+let speedMultiplyer;
 
 function preload() {
 
   // frame rate
-  frameRate(60)
+  frameRate(targetFrameRate)
+  speedMultiplyer = targetFrameRate / frameRate();
 
   //loading the notes
   sound1 = loadSound("DO.wav");
@@ -46,16 +49,16 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
-
-  if (height > width) {
-    cellSize = width/GRID_SIZE;
+  
+  if (windowHeight > windowWidth) {
+    cellSize = windowWidth/GRID_SIZE;
   }
   else {
-    cellSize = height/GRID_SIZE;
+    cellSize = windowHeight/GRID_SIZE;
   }
-  grid = generateRandomGrid(GRID_SIZE, GRID_SIZE);
-}
+  grid = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
+  createCanvas(cellSize*GRID_SIZE, cellSize*GRID_SIZE);
+} 
 
 function draw() {
   strokeWeight(9);
@@ -71,11 +74,11 @@ function mousePressed() {
   let y = Math.floor(mouseY/cellSize);
   let x = Math.floor(mouseX/cellSize);
 
-  if (grid[y][x] === 0) {
-    grid[y][x] = 1;
+  if (grid[y][x].mode === false) {
+    grid[y][x].mode = true;
   }
-  else if (grid[y][x] === 1) {
-    grid[y][x] = 0;
+  else if (grid[y][x].mode === true) {
+    grid[y][x].mode = false;
   }
 }
 
@@ -104,17 +107,18 @@ function displayGrid() {
   let i = 0;
   for (let y = 0; y < GRID_SIZE; y++) {
     for (let x = 0; x < GRID_SIZE; x++) {
-      if (grid[y][x] === 0) {
+      if (grid[y][x].mode === false) {
         fill("white");
-        tileMode = false;
+        //tileMode = false;
       }
-      if (grid[y][x] === 1) {
+      if (grid[y][x].mode === true) {
         fill("black");
-        tileMode = true;
+        //tileMode = true;
       }
+      strokeWeight(10);
       rect(x * cellSize, y * cellSize, cellSize, cellSize);
 
-      tiles[i] = new Tile(x * cellSize + cellSize/2, y * cellSize, tileMode);
+      //tiles[i] = new Tile(x * cellSize + cellSize/2, y * cellSize, tileMode);
 
       i++;
     }
@@ -143,7 +147,8 @@ function generateEmptyGrid(cols, rows) {
   for (let y = 0; y < cols; y++) {
     randomArray.push([]);
     for (let x = 0; x < rows; x++) {
-      randomArray[y].push(0);
+      randomArray[y].push(new Tile(x * cellSize //+ cellSize/2
+      , y * cellSize, false));
     }
   }
   return randomArray;
@@ -158,8 +163,11 @@ function readTiles() {
 
   let deltaTime = 1 / frameRate();
 
-  for (let i = 0; i < tiles.length; i++) {
-    tiles[i].checkCollision();
+  for (let row of grid) {
+    for (let col of row) {
+      col.checkCollision();
+    }
+    //tiles[i].checkCollision();
   }
   if (lineY < cellSize*GRID_SIZE) {
     line(0, lineY, cellSize*GRID_SIZE, lineY);
@@ -167,8 +175,6 @@ function readTiles() {
   }
   else{
     lineY = 0;
-    //line(0, lineY, cellSize*GRID_SIZE, lineY);
-    //readingTiles = false;
   }
 
 
@@ -181,7 +187,7 @@ class Tile {
     this.mode = mode;
   }
   checkCollision() {
-    if(collidePointLine(this.x, this.y, 0, lineY, cellSize*GRID_SIZE, lineY) && this.mode && lineY <= GRID_SIZE*cellSize) {
+    if(collidePointLine(this.x, this.y, -10, lineY, cellSize*GRID_SIZE, lineY) && this.mode && lineY <= GRID_SIZE*cellSize) {
       sounds[floor(this.x/cellSize)].play();
         return true;
       
