@@ -25,14 +25,12 @@ let sound8;
 
 let sounds;
 
-let targetFrameRate = 60;
-let speedMultiplyer;
+
 
 function preload() {
 
   // frame rate
-  frameRate(targetFrameRate)
-  speedMultiplyer = targetFrameRate / frameRate();
+  frameRate(60)
 
   //loading the notes
   sound1 = loadSound("DO.wav");
@@ -50,14 +48,11 @@ function preload() {
 
 function setup() {
   
-  if (windowHeight > windowWidth) {
-    cellSize = windowWidth/GRID_SIZE;
-  }
-  else {
-    cellSize = windowHeight/GRID_SIZE;
-  }
+  
+  cellSize = 80;
+
   grid = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
-  createCanvas(cellSize*GRID_SIZE, cellSize*GRID_SIZE);
+  createCanvas(cellSize*GRID_SIZE + 4.5, cellSize*GRID_SIZE + 4.5);
 } 
 
 function draw() {
@@ -73,12 +68,13 @@ function draw() {
 function mousePressed() {
   let y = Math.floor(mouseY/cellSize);
   let x = Math.floor(mouseX/cellSize);
-
-  if (grid[y][x].mode === false) {
-    grid[y][x].mode = true;
-  }
-  else if (grid[y][x].mode === true) {
-    grid[y][x].mode = false;
+  if (y < grid.length && y >= 0 && x < grid[y].length && x >= 0) {
+    if (grid[y][x].mode === false) {
+      grid[y][x].mode = true;
+    }
+    else if (grid[y][x].mode === true) {
+      grid[y][x].mode = false;
+    }
   }
 }
 
@@ -94,12 +90,12 @@ function keyTyped() {
     lineY = 0;
   }
   else if (key === "l") {
-    lineSpeed += 1000;
-    //lineSpeed = constrain(lineSpeed, -30, 40);
+    lineSpeed += 100;
+    lineSpeed = constrain(lineSpeed, 2000, 3800);
   }
   else if (key === "j") {
-    lineSpeed -= 1000;
-    //lineSpeed = constrain(lineSpeed, -30, 30);
+    lineSpeed -= 100;
+    lineSpeed = constrain(lineSpeed, 2000, 3800);
   }
 }
 
@@ -155,7 +151,7 @@ function generateEmptyGrid(cols, rows) {
 }
 
 let lineY = 0;
-let lineSpeed = 3000;
+let lineSpeed = 2500;
 
 
 
@@ -187,7 +183,7 @@ class Tile {
     this.mode = mode;
   }
   checkCollision() {
-    if(collidePointLine(this.x, this.y, -10, lineY, cellSize*GRID_SIZE, lineY) && this.mode && lineY <= GRID_SIZE*cellSize) {
+    if(collidePointLine(this.x, this.y, -20, lineY, cellSize*GRID_SIZE, lineY) && this.mode && lineY <= GRID_SIZE*cellSize) {
       sounds[floor(this.x/cellSize)].play();
         return true;
       
