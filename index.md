@@ -1,6 +1,7 @@
 # Dhyan's CS30 Stuff
 
 ## Demos
+
 - [Bouncing Balls](01-ball)
 - [Ball Object Notation](03-ball-object)
 - [Ball Array](05-ball-array)
@@ -12,8 +13,9 @@
 - [Game of Life](12-game-of-life)
 - [Grid Character Demo](13-character-grid)
 - [2D Array Grid Assignment Testing](14-grid-assignment)
-- [2D Array Grid Assignment](15-grid-array-assignment)
 
 ## Projects
+
 - [Interactive Scene](02-scene)
 - [Arrays/Objects Assignment](04-arrays-objects-assignment)
+- [2D Array Grid Assignment](15-grid-array-assignment)
