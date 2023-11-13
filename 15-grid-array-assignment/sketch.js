@@ -8,16 +8,26 @@
 
 let grid;
 let cellSize;
-const GRID_SIZE = 8;
+let GRID_SIZE = 8;
 let readingTiles = false;
 let tileMode;
 let tiles = [];
 
 let randomSound;
+let score = 0;
 
 //state
 let normalMode = true;
 let gameMode = false;
+let playingRandomSound;
+
+
+//buttons
+let checkButton;
+let playSoundButton;
+
+//turns
+let numOfTurns;
 
 //initializing the notes
 let sound1;
@@ -50,6 +60,8 @@ function preload() {
   sound8 = loadSound("DO (octave).wav");
   sounds  = [sound1, sound2, sound3, sound4, sound5, sound6, sound7, sound8];
 
+
+
 }
 
 function setup() {
@@ -58,27 +70,35 @@ function setup() {
   cellSize = 50;
 
   grid = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
-  randomSound = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
+  // randomSound = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
   createCanvas(cellSize*GRID_SIZE, cellSize*GRID_SIZE + 4.5 + 70);
 } 
 
 function draw() {
   if(normalMode) {
+    lineY.looping = true;
     strokeWeight(6);
     background(220);
     displayGrid();
     if (lineY.isPlaying) {
       readTiles(grid, lineSpeed, true, lineY);
-      //scan(lineSpeed);
     }
   }
-  else {
-
+  else if (gameMode){
+    strokeWeight(6);
+    background(220);
+    displayGrid();
+    if (lineY.isPlaying) {
+      readTiles(grid, lineSpeed, true, lineY);
+    }
+    if(playingRandomSound) {
+      playRandomSound();
+    }
   }
 }
 
 function mousePressed() {
-  if(normalMode) {
+//  if(normalMode) {
     let y = Math.floor(mouseY/cellSize);
     let x = Math.floor(mouseX/cellSize);
     if (y < grid.length && y >= 0 && x < grid[y].length && x >= 0) {
@@ -89,20 +109,24 @@ function mousePressed() {
         grid[y][x].mode = false;
       }
     }
-  }
+ // }
 }
 
 function keyTyped() {
-  if (key === "r") {
-    grid = generateRandomGrid(GRID_SIZE, GRID_SIZE);
-  }
-  else if (key === "e") {
+  if (key === "e") {
     grid = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
   }
   else if (key === "p") {
-    lineY.isPlaying = !lineY.isPlaying;
-    //readingTiles = !readingTiles;
-    lineY.value = 0;
+    if (normalMode) {
+      lineY.looping = true;
+      lineY.isPlaying = !lineY.isPlaying;
+      //readingTiles = !readingTiles;
+      lineY.value = 0;
+    }
+    else if (gameMode){
+      lineY.isPlaying = !lineY.isPlaying
+      lineY.value = 0;
+    }
   }
   else if (key === "l") {
     lineSpeed += 100;
@@ -111,6 +135,40 @@ function keyTyped() {
   else if (key === "j") {
     lineSpeed -= 100;
     lineSpeed = constrain(lineSpeed, 100, 1900);
+  }
+  else if (key === "g") {
+    normalMode = false;
+    gameMode = true;
+    lineY.value = 0;
+    lineY.looping = false;
+    lineY.isPlaying = false; 
+    numOfTurns = 3;
+    playingRandomSound = false;
+
+    //making and formatting check button
+    checkButton = createButton("Check");
+    checkButton.style('width', '80px');
+    checkButton.style('height', '30px');
+    checkButton.style('background-color', 'lightblue');
+    checkButton.style('color', 'black');
+    checkButton.style('font-size', '18px');
+    checkButton.style('font-weight', 'bold');
+    checkButton.position(72, height - 35);
+    checkButton.mousePressed(checkAnswer);
+
+    //making and formatting play sound button
+    playSoundButton = createButton("Play Sound");
+    playSoundButton.style('width', '130px');
+    playSoundButton.style('height', '25px');
+    playSoundButton.style('background-color', 'lightblue');
+    playSoundButton.style('color', 'black');
+    playSoundButton.style('font-size', '18px');
+    playSoundButton.style('font-weight', 'bold');
+    playSoundButton.position(50, height - 65);
+    playSoundButton.mousePressed(checkTurns);
+    GRID_SIZE = 5;
+    cellSize = width/GRID_SIZE;
+    grid = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
   }
 }
 
@@ -194,14 +252,28 @@ class Tile {
   }
 }
 
-function generateRandomSound() {
+function generateRandomSound(totalNotes = 3) {
   let soundArray = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
 
-  let totalNotes = 3;
 
   while (totalNotes > 0) {
-    let note = soundArray[floor(random(0, 8))][floor(random(0, 8))];
-    if (note.mode === false) {
+    let isTaken;
+    let y = floor(random(0, GRID_SIZE))
+    let x = floor(random(0, GRID_SIZE))
+    let note = soundArray[y][x];
+
+    //checking if the row is empty (avoiding putting more than one in a row)
+    for (let i of soundArray[y]) {
+      if (i.mode) {
+        isTaken = true;
+        break;
+      }
+      else {
+        isTaken = false;
+      }
+    }
+
+    if (!isTaken) {
       note.mode = true;
       totalNotes -= 1;
     }
@@ -209,4 +281,79 @@ function generateRandomSound() {
 
   return soundArray;
 
+}
+
+function checkTurns() {
+  if (numOfTurns === 3) {
+    randomSound = generateRandomSound();
+    playingRandomSound = true;
+    playSoundButton.attribute("disabled", true);
+    numOfTurns -= 1;
+  }
+  else if (numOfTurns === 2) {
+    playingRandomSound = true;
+    playSoundButton.attribute("disabled", true);
+    numOfTurns -= 1;
+  }
+  else if(numOfTurns === 1) {
+    playingRandomSound = true;
+    playSoundButton.attribute("disabled", true);
+    numOfTurns -= 1;
+  }
+}
+
+function playRandomSound() {
+  lineY2.isPlaying = true;
+  readTiles(randomSound, 900, false, lineY2)
+  if (lineY2.isPlaying === false) {
+    if (numOfTurns !== 0) {
+      playSoundButton.removeAttribute("disabled");
+      playingRandomSound = false;
+    }
+    else {
+      playSoundButton.attribute("disabled", true);
+      playingRandomSound = false;
+    }
+  }
+}
+
+function checkAnswer() {
+  if (randomSound !== undefined) {
+    playingRandomSound = false;
+    lineY2.value = 0;
+    lineY.value = 0;
+    lineY.isPlaying = false;
+    lineY2.isPlaying = false;
+    if(soundsMatch(grid, randomSound)) {
+      //correct.play()
+      sounds[7].play();
+      numOfTurns = 3;
+      score++;
+      grid = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
+      if(playSoundButton.elt.hasAttribute("disabled")) {
+        playSoundButton.removeAttribute("disabled");
+      }
+    }
+    else {
+      //wrong.play();
+      sounds[0].play();
+      score = 0;
+      numOfTurns = 3;
+      grid = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
+      if(playSoundButton.elt.hasAttribute("disabled")) {
+        playSoundButton.removeAttribute("disabled");
+      }
+    }
+  }
+}
+
+function soundsMatch (arr1, arr2) {
+  for (let i = 0; i < arr1.length; i++) {
+    for (let j = 0; j < arr1[i].length; j++) {
+      if (arr1[i][j].mode !== arr2[i][j].mode) {
+        return false;
+      }
+    }
+  }
+  return true;
 }
