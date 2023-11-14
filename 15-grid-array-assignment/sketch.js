@@ -378,6 +378,7 @@ function checkAnswer() {
     if(soundsMatch(grid, randomSound)) {
       correct.play()
       numOfTurns = 3;
+      //difficulty gets progressively harder
       if(score >= 4 && score < 8) {
         grid_size = 6;
         cellSize = width/grid_size
