@@ -1,30 +1,39 @@
-// Project Title
-// Your Name
-// Date
+// Music Grid
+// Dhyan Rai
+// 13/11/2023
 //
 // Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+// - used class and objects
+// - used buttons and sliders 
+// - added ability to customize the size of the grid 
+//   while maintaining its sound properties
+// - added a "game" mode
+// - used CSS styling on elements
 
 
 let grid;
 let cellSize;
-let GRID_SIZE = 8;
+let grid_size;
 let readingTiles = false;
 let tileMode;
 let tiles = [];
+let lineSpeed;
+
+let totalNotes = 3;
 
 let randomSound;
 let score = 0;
 
 //state
-let normalMode = true;
-let gameMode = false;
+let mode = "normal";
 let playingRandomSound;
 
 
-//buttons
+//DOM elements
 let checkButton;
 let playSoundButton;
+let speedSlider;
+let rowSlider;
 
 //turns
 let numOfTurns;
@@ -66,30 +75,52 @@ function preload() {
 
 function setup() {
   
-  
+  //starting values
+  grid_size = 8;
   cellSize = 50;
+  
+  //creating sliders
+  speedSlider = createSlider(100, 2000, 900, 50);
+  speedSlider.position(70, 440);
+  speedSlider.size(250);
 
-  grid = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
-  // randomSound = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
-  createCanvas(cellSize*GRID_SIZE, cellSize*GRID_SIZE + 4.5 + 70);
+  rowSlider = createSlider(3, 8, 4, 1);
+  rowSlider.position(70, 480);
+  rowSlider.size(250);
+
+  grid = generateEmptyGrid(grid_size, grid_size);
+  createCanvas(cellSize*grid_size, cellSize*grid_size + 4.5 + 120);
 } 
 
 function draw() {
-  if(normalMode) {
-    lineY.looping = true;
+  if(mode === "normal") {
+    grid_size = rowSlider.value();
+    cellSize = width/grid_size;
+    updateGrid(grid, grid_size);
+    att1.looping = true;
     strokeWeight(6);
-    background(220);
+    background("white");
     displayGrid();
-    if (lineY.isPlaying) {
-      readTiles(grid, lineSpeed, true, lineY);
+    lineSpeed = map(speedSlider.value(), 100, 2000, (20*cellSize - 18*cellSize), (20*cellSize + 18*cellSize));
+    if (att1.isPlaying) {
+      readTiles(grid, lineSpeed, true, att1);
     }
+
+
+    //displaying text based on mode
+    displayText(mode);
+
   }
-  else if (gameMode){
+  else if (mode === "game"){
     strokeWeight(6);
-    background(220);
+    background("white");
     displayGrid();
-    if (lineY.isPlaying) {
-      readTiles(grid, lineSpeed, true, lineY);
+
+    //displaying text based on mode
+    displayText(mode);
+
+    if (att1.isPlaying) {
+      readTiles(grid, lineSpeed, true, att1);
     }
     if(playingRandomSound) {
       playRandomSound();
@@ -98,134 +129,147 @@ function draw() {
 }
 
 function mousePressed() {
-//  if(normalMode) {
-    let y = Math.floor(mouseY/cellSize);
-    let x = Math.floor(mouseX/cellSize);
-    if (y < grid.length && y >= 0 && x < grid[y].length && x >= 0) {
-      if (grid[y][x].mode === false) {
-        grid[y][x].mode = true;
-      }
-      else if (grid[y][x].mode === true) {
-        grid[y][x].mode = false;
-      }
+  //when clicked, the cells "activate"
+  let y = Math.floor(mouseY/cellSize);
+  let x = Math.floor(mouseX/cellSize);
+  if (y < grid.length && y >= 0 && x < grid[y].length && x >= 0) {
+    if (grid[y][x].mode === false) {
+      grid[y][x].mode = true;
     }
- // }
+    else if (grid[y][x].mode === true) {
+      grid[y][x].mode = false;
+    }
+  }
+
 }
 
 function keyTyped() {
-  if (key === "e") {
-    grid = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
-  }
-  else if (key === "p") {
-    if (normalMode) {
-      lineY.looping = true;
-      lineY.isPlaying = !lineY.isPlaying;
+  if (key === "p") {
+    if (mode === "normal") {
+      att1.looping = true;
+      att1.isPlaying = !att1.isPlaying;
       //readingTiles = !readingTiles;
-      lineY.value = 0;
+      att1.value = 0;
     }
-    else if (gameMode){
-      lineY.isPlaying = !lineY.isPlaying
-      lineY.value = 0;
+    else if (mode === "game"){
+      att1.isPlaying = !att1.isPlaying
+      att1.value = 0;
     }
-  }
-  else if (key === "l") {
-    lineSpeed += 100;
-    lineSpeed = constrain(lineSpeed, 100, 1900);
-  }
-  else if (key === "j") {
-    lineSpeed -= 100;
-    lineSpeed = constrain(lineSpeed, 100, 1900);
   }
   else if (key === "g") {
-    normalMode = false;
-    gameMode = true;
-    lineY.value = 0;
-    lineY.looping = false;
-    lineY.isPlaying = false; 
-    numOfTurns = 3;
-    playingRandomSound = false;
+    if (mode === "normal") {
+      mode = "game";
+      att1  = { value: 0, isPlaying: false, looping: false}; 
+      numOfTurns = 3;
+      playingRandomSound = false;
+      lineSpeed = 2500;
+      score = 0;
+      totalNotes = 3;
+  
+      //making and formatting check button
+      checkButton = createButton("Check");
+      checkButton.style('width', '90px');
+      checkButton.style('height', '35px');
+      checkButton.style('background-color', 'lightblue');
+      checkButton.style('color', 'black');
+      checkButton.style('font-size', '24px');
+      checkButton.style('font-weight', 'bold');
+      checkButton.position(63, height - 55);
+      checkButton.mousePressed(checkAnswer);
+  
+      //making and formatting play sound button
+      playSoundButton = createButton("Play Sound");
+      playSoundButton.style('width', '140px');
+      playSoundButton.style('height', '35px');
+      playSoundButton.style('background-color', 'lightblue');
+      playSoundButton.style('color', 'black');
+      playSoundButton.style('font-size', '22px');
+      playSoundButton.style('font-weight', 'bold');
+      playSoundButton.position(45, height - 110);
+      playSoundButton.mousePressed(checkTurns);
+      grid_size = 5;
+      cellSize = width/grid_size;
+      grid = generateEmptyGrid(grid_size, grid_size);
+  
+      speedSlider.remove()
+      rowSlider.remove();
+    }
+  }
 
-    //making and formatting check button
-    checkButton = createButton("Check");
-    checkButton.style('width', '80px');
-    checkButton.style('height', '30px');
-    checkButton.style('background-color', 'lightblue');
-    checkButton.style('color', 'black');
-    checkButton.style('font-size', '18px');
-    checkButton.style('font-weight', 'bold');
-    checkButton.position(72, height - 35);
-    checkButton.mousePressed(checkAnswer);
+  else if (key === "n") {
+    if (mode === "game") {
+      mode = "normal";
+      grid_size = 8;
+      cellSize = 50;
+      lineSpeed = 900;
+      grid = generateEmptyGrid(grid_size, grid_size);
+      readingTiles = false;
+      att1  = { value: 0, isPlaying: false, looping: true};
+      playingRandomSound = false;
+      if (checkButton !== undefined && playSoundButton !== undefined)  {
+        checkButton.remove()
+        playSoundButton.remove();
+      }
+      speedSlider = createSlider(100, 2000, 900, 50);
+      speedSlider.position(70, 440);
+      speedSlider.size(250);
+    
+      rowSlider = createSlider(3, 8, 4, 1);
+      rowSlider.position(70, 480);
+      rowSlider.size(250);
+    }
 
-    //making and formatting play sound button
-    playSoundButton = createButton("Play Sound");
-    playSoundButton.style('width', '130px');
-    playSoundButton.style('height', '25px');
-    playSoundButton.style('background-color', 'lightblue');
-    playSoundButton.style('color', 'black');
-    playSoundButton.style('font-size', '18px');
-    playSoundButton.style('font-weight', 'bold');
-    playSoundButton.position(50, height - 65);
-    playSoundButton.mousePressed(checkTurns);
-    GRID_SIZE = 5;
-    cellSize = width/GRID_SIZE;
-    grid = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
   }
 }
 
 function displayGrid() {
   let i = 0;
-  for (let y = 0; y < GRID_SIZE; y++) {
-    for (let x = 0; x < GRID_SIZE; x++) {
+  for (let y = 0; y < grid_size; y++) {
+    for (let x = 0; x < grid_size; x++) {
       if (grid[y][x].mode === false) {
         fill("white");
-        //tileMode = false;
       }
       if (grid[y][x].mode === true) {
         fill("black");
-        //tileMode = true;
       }
-      //strokeWeight(10);
       rect(x * cellSize, y * cellSize, cellSize, cellSize);
-
-      //tiles[i] = new Tile(x * cellSize + cellSize/2, y * cellSize, tileMode);
-
       i++;
     }
   }
 }
 
+//generates array with all cells inactive
 function generateEmptyGrid(cols = 8, rows = 8) {
   let randomArray = [];
   for (let y = 0; y < cols; y++) {
     randomArray.push([]);
     for (let x = 0; x < rows; x++) {
-      randomArray[y].push(new Tile(x * cellSize //+ cellSize/2
-      , y * cellSize, false));
+      randomArray[y].push(new Tile(x * cellSize, y * cellSize, false));
     }
   }
   return randomArray;
 }
 
-let lineY  = { value: 0, isPlaying: false, looping: true};
-let lineY2 = { value: 0, isPlaying: false, looping: false};
-let lineSpeed = 900;
+//specific attributes for each time readTiles() is called
+let att1  = { value: 0, isPlaying: false, looping: true};
+let att2 = { value: 0, isPlaying: false, looping: false};
 
 
 
+//reads the tiles and produces sounds for each tile
 function readTiles(soundArray, speed, visual, attributes) {
   for (let row of soundArray) {
     for (let col of row) {
-      col.checkCollision(attributes.value);
+      col.checkCollision(attributes.value); 
     }
   }
 
-  let deltaTime = 1 / frameRate();
 
-  if (attributes.value < cellSize*GRID_SIZE) {
+  if (attributes.value < cellSize*grid_size) {
     if (visual) {
-      line(0, attributes.value, cellSize*GRID_SIZE, attributes.value);
+      line(0, attributes.value, cellSize*grid_size, attributes.value);
     }
-    attributes.value += cellSize/(cellSize - (speed * deltaTime));
+    attributes.value += cellSize/(cellSize - (speed * 0.02));
   }
   else{
     if (attributes.looping){
@@ -239,6 +283,7 @@ function readTiles(soundArray, speed, visual, attributes) {
 
 }
 
+
 class Tile {
   constructor(x, y, mode) {
     this.x = x;
@@ -246,20 +291,21 @@ class Tile {
     this.mode = mode;
   }
   checkCollision(yCol) {
-    if(collidePointLine(this.x, this.y, -20, yCol, cellSize*GRID_SIZE, yCol) && this.mode && yCol <= GRID_SIZE*cellSize) {
+    if(collidePointLine(this.x, this.y, -20, yCol, cellSize*grid_size, yCol) && this.mode && yCol <= grid_size*cellSize) {
       sounds[floor(this.x/cellSize)].play();
     }
   }
 }
 
-function generateRandomSound(totalNotes = 3) {
-  let soundArray = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
+//generates a an array that produces a random sound based on parameters (total notes and size)
+function generateRandomSound(totalNotes = 3, size = 5) {
+  let soundArray = generateEmptyGrid(size, size);
 
 
   while (totalNotes > 0) {
     let isTaken;
-    let y = floor(random(0, GRID_SIZE))
-    let x = floor(random(0, GRID_SIZE))
+    let y = floor(random(0, size))
+    let x = floor(random(0, size))
     let note = soundArray[y][x];
 
     //checking if the row is empty (avoiding putting more than one in a row)
@@ -283,9 +329,18 @@ function generateRandomSound(totalNotes = 3) {
 
 }
 
+//checks the turns and plays the same sound array if turns is below 3 (you're on the same sound)
 function checkTurns() {
   if (numOfTurns === 3) {
-    randomSound = generateRandomSound();
+    if(score >= 5 && score < 9) {
+      randomSound = generateRandomSound(totalNotes, 6);
+    }
+    else if (score >= 9) {
+      randomSound = generateRandomSound(totalNotes, 7);
+    }
+    else {
+      randomSound = generateRandomSound(totalNotes, 5);
+    }
     playingRandomSound = true;
     playSoundButton.attribute("disabled", true);
     numOfTurns -= 1;
@@ -302,10 +357,12 @@ function checkTurns() {
   }
 }
 
+
+//plays the randomSound array based on a few conditions
 function playRandomSound() {
-  lineY2.isPlaying = true;
-  readTiles(randomSound, 900, false, lineY2)
-  if (lineY2.isPlaying === false) {
+  att2.isPlaying = true;
+  readTiles(randomSound, lineSpeed, false, att2)
+  if (att2.isPlaying === false) {
     if (numOfTurns !== 0) {
       playSoundButton.removeAttribute("disabled");
       playingRandomSound = false;
@@ -317,29 +374,51 @@ function playRandomSound() {
   }
 }
 
+//checking to see if the user's array matches the answer
 function checkAnswer() {
-  if (randomSound !== undefined) {
+  if (randomSound !== undefined && numOfTurns < 3) {
     playingRandomSound = false;
-    lineY2.value = 0;
-    lineY.value = 0;
-    lineY.isPlaying = false;
-    lineY2.isPlaying = false;
+    att2.value = 0;
+    att1.value = 0;
+    att1.isPlaying = false;
+    att2.isPlaying = false;
     if(soundsMatch(grid, randomSound)) {
       //correct.play()
       sounds[7].play();
       numOfTurns = 3;
-      score++;
-      grid = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
+      if(score >= 4 && score < 8) {
+        grid_size = 6;
+        cellSize = width/grid_size
+        totalNotes = 4;
+        lineSpeed = 2000;
+      }
+      else if (score >= 8) {
+        grid_size = 7;
+        cellSize = width/grid_size
+        totalNotes = 5;
+        lineSpeed = 1800;
+      }
+      else {
+        grid_size = 5;
+        cellSize = width/grid_size
+        totalNotes = 3;
+        lineSpeed = 2500;
+      }
+      grid = generateEmptyGrid(grid_size, grid_size);
       if(playSoundButton.elt.hasAttribute("disabled")) {
         playSoundButton.removeAttribute("disabled");
       }
+      score++;
     }
     else {
       //wrong.play();
       sounds[0].play();
       score = 0;
       numOfTurns = 3;
-      grid = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
+      grid_size = 5;
+      cellSize = width/grid_size;
+      totalNotes = 3;
+      grid = generateEmptyGrid(grid_size, grid_size);
       if(playSoundButton.elt.hasAttribute("disabled")) {
         playSoundButton.removeAttribute("disabled");
       }
@@ -347,6 +426,7 @@ function checkAnswer() {
   }
 }
 
+//function to compare two sound arrays and see if they are equal
 function soundsMatch (arr1, arr2) {
   for (let i = 0; i < arr1.length; i++) {
     for (let j = 0; j < arr1[i].length; j++) {
@@ -356,4 +436,66 @@ function soundsMatch (arr1, arr2) {
     }
   }
   return true;
+}
+
+//function that upates grid without bugs based on the size
+function updateGrid (arr, numOfRows) {
+  if (arr.length > numOfRows) {
+    let diff = arr.length - numOfRows
+    for (let i = 0; i < diff; i++) {
+      arr.pop();
+    }
+    for (let y = 0; y < arr.length; y++) {
+      for (let x = 0; x < diff; x++) {
+        arr[y].pop();
+      }
+    }
+    for (let m = 0; m < arr.length; m++) {
+      for (let n = 0; n < arr[m].length; n++) {
+        arr[m][n].x = n * cellSize;
+        arr[m][n].y = m * cellSize;
+      }
+    }
+  }
+  else if (arr.length < numOfRows) {
+    let diff = numOfRows - arr.length;
+    for (let i = 0; i < diff; i++) {
+      arr.push([]);
+      for (let j = 0; j < arr[0].length; j++) {
+        arr[arr.length - 1].push(new Tile (j * cellSize, (arr.length - 1) * cellSize, false));
+      }
+    }
+    for (let y = 0; y < arr.length; y++) {
+      for (let x = 0; x < diff; x++) {
+        arr[y].push(new Tile (x, y, false));
+      }
+    }
+
+    for (let m = 0; m < arr.length; m++) {
+      for (let n = 0; n < arr[m].length; n++) {
+        arr[m][n].x = n * cellSize;
+        arr[m][n].y = m * cellSize;
+      }
+    }    
+    
+  } 
+}
+
+function displayText(mode) {
+  if (mode === "normal") {
+    push()
+    fill("black");
+    textSize(20);
+    text("Speed: " + speedSlider.value(), 150, 435)
+    text("Rows/Columns: " + rowSlider.value(), 123, 475)
+    pop();
+  }
+  else if (mode === "game") {
+    push()
+    fill("black");
+    textSize(27);
+    text("Score: " + score, 250, height - 80)
+    text("Total Notes: " + totalNotes, 215, height - 35);
+    pop();
+  }
 }
