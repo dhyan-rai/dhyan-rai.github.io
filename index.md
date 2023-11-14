@@ -14,6 +14,7 @@
 - [Grid Character Demo](13-character-grid)
 - [2D Array Grid Assignment Testing](14-grid-assignment-test)
 - [Dog OOP Demo](16-dog-oop)
+- [Walker OOP Demo](17-walker-oop)
 
 ## Projects
 
