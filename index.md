@@ -15,6 +15,7 @@
 - [2D Array Grid Assignment Testing](14-grid-assignment-test)
 - [Dog OOP Demo](16-dog-oop)
 - [Walker OOP Demo](17-walker-oop)
+- [Ball OOP Demo](18-ball-oop)
 
 ## Projects
 

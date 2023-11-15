@@ -40,7 +40,7 @@ let rowSlider;
 let numOfTurns;
 
 //colors
-let colors = ["lightgreen", "magenta", "lightblue", "yellow", "orange", "green", "blue", "red"]
+let colors = ["lightgreen", "magenta", "lightblue", "yellow", "orange", "green", "blue", "red"];
 
 //initializing the notes
 let sound1;
@@ -60,7 +60,7 @@ let wrong;
 function preload() {
 
   // frame rate
-  frameRate(60)
+  frameRate(60);
 
   //loading the notes
   sound1 = loadSound("DO.wav");
@@ -164,7 +164,7 @@ function keyTyped() {
       tiles1.value = 0;
     }
     else if (mode === "game"){
-      tiles1.isPlaying = !tiles1.isPlaying
+      tiles1.isPlaying = !tiles1.isPlaying;
       tiles1.value = 0;
     }
   }
@@ -179,13 +179,13 @@ function keyTyped() {
       totalNotes = 3;
 
       //creating buttons
-      createButtons()
+      createButtons();
 
       grid_size = 5;
       cellSize = width/grid_size;
       grid = generateEmptyGrid(grid_size, grid_size);
   
-      speedSlider.remove()
+      speedSlider.remove();
       rowSlider.remove();
     }
   }
@@ -201,7 +201,7 @@ function keyTyped() {
       tiles1  = { value: 0, isPlaying: false, looping: true};
       playingRandomSound = false;
       if (checkButton !== undefined && playSoundButton !== undefined)  {
-        checkButton.remove()
+        checkButton.remove();
         playSoundButton.remove();
       }
 
@@ -297,8 +297,8 @@ function generateRandomSound(totalNotes = 3, size = 5) {
 
   while (totalNotes > 0) {
     let isTaken;
-    let y = floor(random(0, size))
-    let x = floor(random(0, size))
+    let y = floor(random(0, size));
+    let x = floor(random(0, size));
     let note = soundArray[y][x];
 
     //checking if the row is empty (avoiding putting more than one in a row)
@@ -381,19 +381,19 @@ function checkAnswer() {
       //difficulty gets progressively harder
       if(score >= 4 && score < 8) {
         grid_size = 6;
-        cellSize = width/grid_size
+        cellSize = width/grid_size;
         totalNotes = 4;
         lineSpeed = 2000;
       }
       else if (score >= 8) {
         grid_size = 7;
-        cellSize = width/grid_size
+        cellSize = width/grid_size;
         totalNotes = 5;
         lineSpeed = 1800;
       }
       else {
         grid_size = 5;
-        cellSize = width/grid_size
+        cellSize = width/grid_size;
         totalNotes = 3;
         lineSpeed = 2500;
       }
@@ -489,18 +489,18 @@ function displayText(mode) {
     fill("black");
     textSize(19);
     textStyle(BOLD);
-    text("Speed: " + speedSlider.value(), 152, 423)
-    text("Rows/Columns: " + rowSlider.value(), 125, 465)
+    text("Speed: " + speedSlider.value(), 152, 423);
+    text("Rows/Columns: " + rowSlider.value(), 125, 465);
     pop();
     push();
     fill("black");
     textSize(19);
     textStyle(BOLDITALIC);
-    text("Press P to play sound, G for game mode", 21, 510)
+    text("Press P to play sound, G for game mode", 21, 510);
     pop();
   }
   else if (mode === "game") {
-    push()
+    push();
     fill("black");
     textSize(27);
     textStyle("bold");
