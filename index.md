@@ -16,6 +16,7 @@
 - [Dog OOP Demo](16-dog-oop)
 - [Walker OOP Demo](17-walker-oop)
 - [Ball OOP Demo](18-ball-oop)
+- [Connected Ball OOP Demo](19-nodes)
 
 ## Projects
 
