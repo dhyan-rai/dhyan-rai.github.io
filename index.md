@@ -17,6 +17,7 @@
 - [Walker OOP Demo](17-walker-oop)
 - [Ball OOP Demo](18-ball-oop)
 - [Connected Ball OOP Demo](19-nodes)
+- [Firework OOP Demo](20-firework-oop)
 
 ## Projects
 
