@@ -19,6 +19,7 @@
 - [Connected Ball OOP Demo](19-nodes)
 - [Firework OOP Demo](20-firework-oop)
 - [Inheritance Demo](21-inheritance)
+- [Collision Demo](22-collision)
 
 ## Projects
 
