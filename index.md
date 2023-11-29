@@ -20,6 +20,7 @@
 - [Firework OOP Demo](20-firework-oop)
 - [Inheritance Demo](21-inheritance)
 - [Collision Demo](22-collision)
+- [P5 Play Template](23-p5play)
 
 ## Projects
 
