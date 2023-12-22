@@ -21,6 +21,7 @@
 - [Inheritance Demo](21-inheritance)
 - [Collision Demo](22-collision)
 - [P5 Play Template](23-p5play)
+- [Recursion Demo](24-recursion-demo)
 
 ## Projects
 
