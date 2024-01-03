@@ -21,7 +21,7 @@ function draw() {
     //display
     circle(theBall.x, theBall.y, theBall.size);
   
-    theBall.time += 0.01;
+    theBall.time += 0.001;
   }
 }
 
